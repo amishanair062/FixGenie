@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FixGenie - Debugger</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="icon" type="image/x-icon" href="image/FG.ico"/>
+</head>
+<body>
+  <header class="navbar">
+    <a href="dashboard.html">
+      <img src="image/FIxGenieLogo.svg" />
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="debugger.html">Debugger</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="setting.html">Settings</a></li>
+      </ul>
+    </nav>
+    <a href="profile.html" class="username">👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i></a>
+  </header>
+
+  <main class="debugger-main">
+	<div class = "container">
+    <section class="welcome-section" style="margin-top: 1rem;">
+      <div class="welcome-box">
+        <h1 style="font-size: 50px;">Welcome to FixGenie</h1>
+        <p class="subtext">Powering developers with AI precision and coding magic. Dive in and debug smarter.</p>
+      </div>
+    </section>
+
+    <section class="tip-section">
+      <div class="tip-box animated-glow">
+        <h2>💡 Today's Debugging Tip</h2>
+        <p>Always check for off-by-one errors in loops and boundary conditions. They’re a sneaky source of bugs!</p>
+      </div>
+    </section>
+
+    <section class="activity-section">
+      <div class="section-box">
+        <h2 class="section-title">🕵️ Recent Activities</h2>
+        <ul id="activity-list">
+          <li>Debugged null pointer exception at 11:45 AM</li>
+          <li>Fixed memory leak in Module X at 10:22 AM</li>
+          <li>User JohnDoe signed in</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="streak-section">
+      <div class="score-box">
+        <div class="fix-score">
+			<h2 class="score-title">🏆 Your Debugging Streak</h2>
+			<p class="streak-number">0 Days 😢</p>
+			<p>Start fixing bugs to build your streak!</p>
+
+        </div>
+      </div>
+    </section>
+	</div>
+  </main>
+
+  <footer>
+    &copy; 2025 FixGenie. All rights reserved. | Powered by AI & Code Wizards
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const username = localStorage.getItem("username");
+      document.getElementById("display-username").textContent = username || "Guest";
+    });
+
+    function checkAuthAndFetchData() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log in to access the dashboard.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      fetch("http://localhost:8080/api/user/activities", {
+        method: "GET",
+        headers: { "Authorization": "Bearer " + token }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Unauthorized or session expired.");
+        return response.json();
+      })
+      .then(data => {
+        const list = document.getElementById("activity-list");
+        list.innerHTML = "";
+        data.forEach(activity => {
+          const li = document.createElement("li");
+          li.textContent = activity;
+          list.appendChild(li);
+        });
+      })
+      .catch(error => {
+        alert("Error: " + error.message);
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+      });
+    }
+	
+	fetch('/api/debug/my-history', {
+	  headers: {
+	    Authorization: `Bearer ${localStorage.getItem('token')}`
+	  }
+	})
+	.then(res => res.json())
+	.then(data => {
+	  const list = document.getElementById("activity-list");
+	  list.innerHTML = "";
+
+	  // Sort latest first
+	  data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+	  const recentActivities = data.slice(0, 5);
+
+	  recentActivities.forEach(item => {
+	    const dateTime = new Date(item.timestamp);
+	    const formattedTime = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	    const formattedDate = dateTime.toLocaleDateString();
+
+	    // 🌟 Smart title fallback
+	    let title = "";
+	    if (item.errorContext && item.errorContext !== "None") {
+	      title = item.errorContext.trim();
+	    } else {
+	      try {
+	        let parsedCodeInput = item.codeInput;
+	        if (typeof parsedCodeInput === "string") {
+	          parsedCodeInput = JSON.parse(parsedCodeInput)?.codeInput || parsedCodeInput;
+	        }
+	        title = parsedCodeInput?.split('\n')[0]?.substring(0, 50).trim() || "Debug Session";
+	      } catch {
+	        title = (item.codeInput || "Debug Session").split('\n')[0]?.substring(0, 50).trim();
+	      }
+	    }
+
+	    const li = document.createElement("li");
+	    li.textContent = `${title} on ${formattedDate} at ${formattedTime}`;
+	    list.appendChild(li);
+	  });
+	  
+	  calculateStreak(data);
+	});
+	
+	
+	
+	//streaks...
+
+	function calculateStreak(historyData) {
+	    const uniqueDates = new Set(
+	        historyData.map(item => {
+	            const d = new Date(item.timestamp);
+	            return d.toISOString().split('T')[0];
+	        })
+	    );
+
+	    let streak = 0;
+	    let today = new Date();
+	    
+	    while (true) {
+	        const dateStr = today.toISOString().split('T')[0];
+	        if (uniqueDates.has(dateStr)) {
+	            streak++;
+	            today.setDate(today.getDate() - 1);
+	        } else {
+	            break;
+	        }
+	    }
+
+	    const streakNumberElement = document.querySelector(".streak-number");
+	    const streakMessageElement = document.querySelector(".fix-score p:last-child");
+	    const scoreBox = document.querySelector(".score-box");
+
+	    if (streak > 0) {
+	        streakNumberElement.innerHTML = `${streak} Day${streak > 1 ? "s" : ""} 🔥`;
+	        streakMessageElement.innerText = `Keep the momentum going! You're crushing bugs like a pro.`;
+
+	        if (streak >= 5) {
+	            // 🌟 Glow Effect for strong streaks
+	            scoreBox.style.boxShadow = "0 0 20px 5px gold";
+	            scoreBox.style.transition = "box-shadow 0.5s ease-in-out";
+	        } else {
+	            scoreBox.style.boxShadow = "none";
+	        }
+	    } else {
+	        streakNumberElement.innerHTML = `0 Days 😢`;
+	        streakMessageElement.innerText = `No streak yet. Debug today to start your journey!`;
+	        scoreBox.style.boxShadow = "none";
+	    }
+	}
+
+
+
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+  </script>
+  <script src="settings.js"></script>
+</body>
+</html>

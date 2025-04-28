@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixGenie - Debugger</title>
+    <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+		<link rel="icon" type="image/x-icon" href="image/FG.ico">
+	<style>
+	      <!--  body {
+	            display: flex;
+	            flex-direction: column;
+	            height: 100vh;
+	            color: #333;
+	        }-->
+	        .container {
+	            display: flex;
+	            flex-direction: column;
+	            flex: 1;
+	            padding: 20px;
+	        }
+	        .top-bar {
+	            display: flex;
+	            justify-content: space-between;
+	            align-items: center;
+	            padding: 10px;
+	            background: #ecf0f1;
+	            border-radius: 8px;
+	        }
+	        .editor {
+	            flex: 1;
+	            margin-top: 20px;
+	        }
+	        textarea {
+	            width: 100%;
+	            height: 200px;
+	            padding: 10px;
+	            border: 1px solid #ccc;
+	            border-radius: 5px;
+	            font-size: 16px;
+	        }
+	        .output {
+	            margin-top: 20px;
+	        }
+	        .output-box {
+	            background: #f8f9fa;
+	            padding: 15px;
+	            border: 1px solid #ccc;
+	            border-radius: 5px;
+	            max-height: 300px;
+				overflow-y: auto;
+				overflow-x: hidden;
+				white-space: pre-wrap;
+				word-wrap: break-word;
+				font-family: 'Courier New', monospace;
+	        } 
+	        .btn {
+	            background: #3498db;
+	            color: white;
+	            padding: 10px 15px;
+	            border: none;
+	            border-radius: 5px;
+	            cursor: pointer;
+	            margin-right: 10px;
+	        }
+	        .btn:hover {
+	            background: #2980b9;
+	        }
+			select{
+				background-color: #3498db;
+				padding: 4px;
+				border: none;
+				border-radius: 5px;
+				color: white;
+				margin: 0 10px;
+			}
+			select:hover{
+				background-color: #2980b9;
+			}
+			#file-upload{
+				background-color: #3498db;
+				    padding: 4px;
+				    border: none;
+				    border-radius: 5px;
+				    color: white;
+				    margin: 0 10px;
+			}
+			
+			pre {
+			    background-color: #e8eaf6;
+			    padding: 10px;
+			    border-left: 3px solid #3f51b5;
+			    overflow-x: auto;
+			    font-size: 15px;
+			    line-height: 1.5;
+				white-space: pre-wrap;
+				word-wrap: break-word;
+				overflow-x: hidden;
+			}
+
+			strong {
+			    color: #2c3e50;
+			}
+
+			.fileUpload {
+			    display: inline-block;
+			    padding: 8px 15px;
+			    background-color: #3498db;
+			    color: white;
+			    font-weight: 500;
+			    border-radius: 5px;
+			    cursor: pointer;
+			    transition: background-color 0.3s;
+			}
+			.fileUpload:hover {
+			    background-color: #2980b9;
+			}
+
+			
+			input{
+				
+			}
+	    </style>
+	</head>
+	<body>
+	    <header class="navbar">
+			<a href="dashboard.html">
+			        <img src="image/FIxGenieLogo.svg"></a>
+			       
+	        <nav>
+	            <ul class="nav-links">
+	                <li><a href="dashboard.html">Dashboard</a></li>
+	                <li><a href="debugger.html">Debugger</a></li>
+	                <li><a href="history.html">History</a></li>
+	                <li><a href="setting.html">Settings</a></li>
+	            </ul>
+	        </nav>
+<a href="profile.html" class="username">👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i></a>			
+			
+	    </header>
+	    <div class="container">
+	        <header class="top-bar">
+	            <select id="language-select">
+	                <option value="java">Java</option>
+	                <option value="python">Python</option>
+	                <option value="javascript">JavaScript</option>
+	            </select>
+	            <button class="btn" onclick="runDebugger()">Run</button>
+	            <button class="btn" onclick="clearEditor()">Clear</button>
+				<label for="file-upload" class="fileUpload">
+					<i class="fa-solid fa-file"></i>  Choose File
+				</label>
+				
+	            <input type="file" id="file-upload" accept=".txt, .java, .py, .js" style="display:none;">
+				<span id="file-name" style="margin-left: 10px; font-style: italic;"></span>
+
+	        </header>
+	        <section class="editor">
+	            <textarea id="code-editor" placeholder="Write or paste your code here..."></textarea>
+	        </section>
+	        <section class="output">
+	            <h3  id="Ot">Output:</h3>
+	            <div class="output-box" id="output-box">Your debug results will appear here.</div>
+	        </section>
+	    </div>
+		
+		
+		<!--//javascript------>
+		
+		<script>
+		document.addEventListener("DOMContentLoaded", function () {
+		    const username = localStorage.getItem("username");
+		    console.log("Username from localStorage: ", username);
+		    if (username) {
+		        document.getElementById("display-username").textContent = username;
+		    } else {
+		        document.getElementById("display-username").textContent = "Guest";
+		    }
+		});
+
+		function runDebugger() {
+		    const code = document.getElementById("code-editor").value;
+		    const language = document.getElementById("language-select").value;
+		    const token = localStorage.getItem("token");
+
+		    fetch("/api/debug/ai-solve", {
+		        method: "POST",
+		        headers: {
+		            "Content-Type": "application/json"
+		        },
+		        body: JSON.stringify({
+		            errorText: code,
+		            language: language
+		        })
+		    })
+		    .then(res => {
+		        if (!res.ok) throw new Error("AI Debugging failed");
+		        return res.json();
+		    })
+		    .then(aiData => {
+				
+				let explanation = aiData.explanation.replace(/(error|exception|null|undefined|fail)/gi, 
+				    match => `<span style="color: red; font-weight: bold;">${match}</span>`);
+
+		        // Extract fixed code from solution using regex
+		        let fixedCode = "";
+		        const match = aiData.solution.match(/```(?:\w+)?\n([\s\S]*?)\n```/);
+		        if (match) {
+		            fixedCode = match[1].trim();
+		        }
+
+		        let aiOutput = `<strong>🧠 AI Debugging Result---></strong><br><br>`;
+		        aiOutput += `<strong>Solution:</strong><br><pre>${aiData.solution}</pre><br>`;
+		        aiOutput += `<strong>Explanation:</strong><br><pre>${aiData.explanation}</pre><br>`;
+		        aiOutput += `<strong>Confidence:</strong> ${(aiData.confidence * 100).toFixed(2)}%<br><hr>`;
+
+		        // ✅ Now pass the fixed code to the save API
+		        fetch("/api/debug/save", {
+		            method: "POST",
+		            headers: {
+		                "Content-Type": "application/json",
+		                "Authorization": "Bearer " + token
+		            },
+		            body: JSON.stringify({
+		                codeInput: code,
+		                language: language,
+		                fixedCode: fixedCode 
+		            })
+		        })
+		        .then(res => {
+		            if (!res.ok) throw new Error("Saving debug history failed");
+		            return res.json();
+		        })
+		        .then(saveData => {
+		            let fullOutput = aiOutput;
+		            fullOutput += `<strong>📄 Debug Save Status:</strong> ${saveData.status}<br><br>`;
+		            
+		            document.getElementById("output-box").innerHTML = fullOutput;
+		        })
+		        .catch(error => {
+		            document.getElementById("output-box").innerText = "Save Error: " + error.message;
+		        });
+
+		    })
+		    .catch(error => {
+		        document.getElementById("output-box").innerText = "AI Error: " + error.message;
+		    });
+		}
+
+		
+		/*function runDebugger() {
+		    const runBtn = document.getElementById("run-button");
+		    runBtn.disabled = true;
+		    runBtn.innerText = "Debugging...";
+
+		    // your fetch logic here...
+
+		    // inside the final `.then()` or `.catch()`, re-enable:
+		    runBtn.disabled = false;
+		    runBtn.innerText = "Run Debugger";
+		}*/
+
+
+		function clearEditor() {
+		    document.getElementById("code-editor").value = "";
+		    document.getElementById("output-box").innerText = "Your debug results will appear here.";
+		}
+		
+		/*File-uplaod function*/
+		
+		document.getElementById("file-upload").addEventListener("change", function () {
+		    const file = this.files[0];
+		    if (file) {
+		        const reader = new FileReader();
+		        reader.onload = function (e) {
+		            document.getElementById("code-editor").value = e.target.result;
+		        };
+		        reader.readAsText(file);
+
+		        document.getElementById("file-name").textContent = file.name;
+		    } else {
+		        document.getElementById("code-editor").value = "";
+		        document.getElementById("file-name").textContent = "";
+		    }
+		});
+
+		
+		document.getElementById("file-upload").addEventListener("change", function () {
+		    const file = this.files[0];
+		    document.getElementById("file-name").textContent = file ? file.name : "";
+		});
+
+		</script>
+		<script src="/settings.js"></script>
+
+
+
+	</body>
+	</html>

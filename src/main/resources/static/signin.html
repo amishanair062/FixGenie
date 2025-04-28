@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixGenie - Sign up</title>
+<!--   <link rel="stylesheet" href="style.css">-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<link rel="icon" type="image/x-icon" href="image/FG.ico">
+
+	<style>
+		* {
+		   margin: 0;
+		   padding: 0;
+		   box-sizing: border-box;
+		   font-family: Arial, sans-serif;
+		        }
+		body{
+			background-image: linear-gradient(to bottom left, rgb(11 21 138), #9a00ff, #830683);
+			display: flex;	
+			justify-content: center;
+			height: 100vh;
+		}
+		.form-container{
+			width: 100%;	
+			max-width: 536px;
+			
+		}
+		.form-box{
+			margin: 1rem;
+			padding: 3rem 5rem;
+			background: rgb(11 11 81);
+			border-radius: 36px;
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+			color: beige;
+		}
+		label {
+		     display: block;
+		     margin: 1rem 0 0.5rem;
+		   }
+		   input[type="text"],
+		   input[type="email"],
+		   input[type="password"] {
+		     width: 100%;
+		     padding: 0.6rem;
+		     border-radius: 8px;
+		     border: none;
+		     background: #1e293b;
+		     color: #fff;
+		   }
+		   button{
+			padding: 7px 25px;
+			border-radius: 8px;
+			border: none;
+			background-image: linear-gradient(20deg, #4700ff, #00dcff);
+			font-size: 15px;
+			font-weight: bolder;
+		   }
+		   button:hover{
+			background-image: linear-gradient(20deg, rgb(255, 0, 255), #00dcff);
+			color: rgb(192, 192, 192);
+		   }
+		   
+		   button:focus{
+			outline: none;
+			box-shadow: 0 0 10px #00f0ff;
+			border: 1px solid #00f0ff;
+		   }
+		   
+		   input:focus {
+		     outline: none;
+		     box-shadow: 0 0 10px #00f0ff;
+		     border: 1px solid #00f0ff;
+		   }
+		   
+		   
+		   a{
+		   	color: aqua;
+		   	}
+		   a:hover{
+		   	color: limegreen ;
+		    }
+		   
+	</style>
+</head>
+<body>
+	
+	<div style = "margin-bottom: 1rem;">
+			<a href="index.html">
+			      <img src="image/FIxGenieLogo.svg" style="width: 280px;"/>
+			    </a> </div>
+	
+	<form id="signupForm" class="form-container">
+		<h1 style="text-align:center; margin-top:46px" color="white" >Sign Up</h1>
+		<h3 style="text-align:center; margin: 5px;">Join FixGenie — Where Bugs Meet Their End 🧞‍♂️</h3>
+		<div class="form-box">
+			<!--<i class="fa-solid fa-user"></i>-->
+			<label for="username">User Name:</label><br>
+		  <input type="text" id="username" name="username" required><br><br>
+		  
+		  <label for="email"> Email ID</label><br>
+		  <input type="email" id="email" name="email" required><br><br>
+		  
+		  <label for="password">Password</label><br>
+		  <input type="password" id="password" name="password" required><br><br><br>
+		  
+		  <input type="checkbox">  Remember password<br><br> 
+		  
+		  <button type="submit">Sign Up</button><br><br><br>
+		  
+		  <div style="text-align: center;">Already have a account? <a href="login.html">Login</a></div>  
+	</form>
+	</div>
+	
+	<!--JavaScript-->
+	
+	<script>
+		document.getElementById("signupForm").addEventListener("submit", function (e) {
+		    e.preventDefault();
+			
+	        const username = document.getElementById("username").value;
+	        const email = document.getElementById("email").value;
+	        const password = document.getElementById("password").value;
+
+			fetch("http://localhost:8080/api/auth/signup", {
+			        method: "POST",
+			        headers: {
+			            "Content-Type": "application/json"
+			        },
+			        body: JSON.stringify({ username, email, password })
+			    })
+				.then(response => response.json())
+							.then(data => {
+								if (data.status) {
+									localStorage.setItem("token", data.token); // ✅ Save token in local storage
+									localStorage.setItem("username", username); 
+									alert("Signup successful! Redirecting to login page ...");
+									window.location.href = "login.html"; 
+								} else {
+									alert("Signup failed: " + data.message);
+								}
+							})
+							.catch(error => {
+								console.error("Signup error:", error);
+								alert("Signup failed: " + error.message);
+							});
+			});
+			
+			
+
+			
+	</script>
+
+	
+	
+</body>
+</html>

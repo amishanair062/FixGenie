@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FixGenie | Profile</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="image/FG.ico">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("image/bg.svg") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 450px;
+      color: white;
+      box-shadow: 0 0 40px rgba(0, 255, 195, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #00ffc3;
+      
+    }
+
+    .file-label {
+      display: inline-block;
+      margin-bottom: 15px;
+      font-size: 17px;
+      color: #00ffc3;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .file-label:hover {
+      color: #fff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .emoji-preview {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .username {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-edit {
+      background: linear-gradient(135deg, #00ffc3, #00b896);
+      color: #000;
+    }
+
+    .btn-logout {
+      background: linear-gradient(135deg, #ff7676, #ff4444);
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+	
+		<a href="dashboard.html" style = "margin-bottom: 1rem;"  >
+		      <img src="image/FIxGenieLogo.svg" style="width: 280px;"/>
+		    </a>
+	
+  <div class="glass-card">
+    <h1>🧙 FixGenie Profile</h1>
+
+    <img id="profile-image" class="profile-img" src="image/bg.jpeg" alt="Profile Image" />
+    <label for="image-upload" class="file-label">📸 Upload Profile Image</label>
+    <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)" />
+
+    <div class="emoji-preview" id="welcome-msg">👋 Hello!!</div>
+    <div class="username" id="current-username">Loading...</div>
+
+    <button class="btn btn-edit" onclick="toggleEdit()">✏️ Edit Username</button>
+
+    <div id="edit-box" class="hidden">
+      <input type="text" id="username-input" placeholder="Enter new username..." />
+      <button class="btn btn-edit" onclick="saveUsername()">💾 Save</button>
+    </div>
+
+    <button class="btn btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const backendUrl = 'http://localhost:8080/api/users/update-username';
+
+    function loadUsername() {
+      const username = localStorage.getItem('username') || 'Guest';
+      document.getElementById('current-username').innerText = username;
+      document.getElementById('welcome-msg').innerText = `👋 Hello!! ${username}`;
+    }
+
+    function toggleEdit() {
+      document.getElementById('edit-box').classList.toggle('hidden');
+    }
+
+    async function saveUsername() {
+      const newName = document.getElementById('username-input').value.trim();
+      if (!newName) return alert("Enter a valid name!");
+
+      try {
+        const response = await fetch(backendUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ newUsername: newName })
+        });
+
+        if (response.ok) {
+          localStorage.setItem('username', newName);
+          loadUsername();
+          toggleEdit();
+          alert('Username updated!');
+        } else {
+          alert('Server rejected update.');
+        }
+      } catch (error) {
+        alert('Error updating!');
+        console.error(error);
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        document.getElementById('profile-image').src = reader.result;
+        localStorage.setItem('profileImage', reader.result);
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function loadProfileImage() {
+      const storedImage = localStorage.getItem('profileImage');
+      if (storedImage) {
+        document.getElementById('profile-image').src = storedImage;
+      }
+    }
+
+    window.onload = function () {
+      loadUsername();
+      loadProfileImage();
+    };
+  </script>
+</body>
+</html>

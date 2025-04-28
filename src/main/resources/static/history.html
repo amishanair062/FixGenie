@@ -1,0 +1,445 @@
+<!-- FILE: history.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixGenie - Debug History</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="image/FG.ico">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            color: #2c3e50;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        h1 {
+            font-size: 2rem;
+            margin: 2rem;
+            text-align: center;
+            color: #34495e;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem auto 2rem;
+            width: 90%;
+        }
+        .toolbar input,
+        .toolbar select,
+        .toolbar button {
+            padding: 0.6rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .toolbar button {
+            background-color: #2980b9;
+            color: white;
+            cursor: pointer;
+        }
+
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0 5%;
+        }
+        .card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            position: relative;
+        }
+        .card h3 {
+            color: #2980b9;
+            margin: 0;
+        }
+        .card p.meta {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .card pre {
+            background-color: #f0f0f0;
+            padding: 0.75rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 150px;
+            font-size: 0.85rem;
+        }
+
+        .status {
+            align-self: flex-end;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            position: relative;
+        }
+        .status:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .fixed { background-color: #27ae60; color: white; }
+        .failed { background-color: #c0392b; color: white; }
+        .progress { background-color: #f39c12; color: white; }
+
+        .analytics {
+            display: flex;
+            justify-content: space-around;
+            padding: 2rem 5%;
+            margin-top: 2rem;
+        }
+        .analytics-card {
+            flex: 1;
+            margin: 0 1rem;
+            background-color: white;
+            border-radius: 12px;
+            text-align: center;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .analytics-card i {
+            font-size: 1.5rem;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2980b9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 40px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+		.modal {
+		  position: fixed;
+		  top: 0; left: 0;
+		  width: 100%; height: 100%;
+		  background-color: rgba(0,0,0,0.5);
+		  z-index: 9999;
+		  display: flex; align-items: center; justify-content: center;
+		}
+		.modal-content {
+		  background: white;
+		  padding: 2rem;
+		  border-radius: 10px;
+		  max-width: 700px;
+		  width: 90%;
+		  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+		  position: relative;
+		  max-height: 90vh;
+		  overflow-y: auto;
+		}
+		.close-button {
+		  position: absolute;
+		  top: 10px; right: 15px;
+		  font-size: 1.5rem;
+		  cursor: pointer;
+		}
+		#modal-content-area pre {
+		  background-color: #f4f4f4;
+		  padding: 1rem;
+		  border-radius: 6px;
+		  overflow-x: auto;
+		  font-size: 0.95rem;
+		}
+
+
+    </style>
+</head>
+<body>
+
+	<header class="navbar">
+				<a href="dashboard.html">
+				        <img src="image/FIxGenieLogo.svg"></a>
+				     
+		        <nav>
+		            <ul class="nav-links">
+		                <li><a href="dashboard.html">Dashboard</a></li>
+		                <li><a href="debugger.html">Debugger</a></li>
+		                <li><a href="history.html">History</a></li>
+		                <li><a href="setting.html">Settings</a></li>
+		            </ul>
+		        </nav>
+<a href="profile.html" class="username">👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i></a>				
+		    </header>
+
+    <h1>🪄 Your Debug History</h1>
+
+    <div class="toolbar">
+        <input type="text" id="searchBox" placeholder="Search history...">
+        <button onclick="alert('Coming Soon')">Export PDF</button>
+        <button onclick="alert('Coming Soon')">Export CSV</button>
+    </div>
+
+    <div class="history-container">
+        <div class="loader" id="history-loader"></div>
+		<div id="debug-modal" class="modal" style="display:none;">
+		  <div class="modal-content">
+		    <span class="close-button">&times;</span>
+		    <h2>🔍 Debug Details</h2>
+		    <div id="modal-content-area">
+		      
+		    </div>
+		  </div>
+		</div>
+    </div>
+
+    <div class="analytics">
+        <div class="analytics-card">
+            <i class="fa-solid fa-bug"></i>
+            <h2 id="total">0</h2>
+            <span>Total Debugs</span>
+        </div>
+        <div class="analytics-card">
+            <i class="fa-solid fa-check-circle"></i>
+            <h2 id="fixed">0</h2>
+            <span>Fixed</span>
+        </div>
+        <div class="analytics-card">
+            <i class="fa-solid fa-xmark-circle"></i>
+            <h2 id="failed">0</h2>
+            <span>Failed</span>
+        </div>
+        <div class="analytics-card">
+            <i class="fa-solid fa-spinner"></i>
+            <h2 id="progress">0</h2>
+            <span>In Progress</span>
+        </div>
+    </div>
+	
+	
+	<script src="settings.js"></script>
+
+    <script>
+		// Modal for full details
+		    const modal = document.createElement("div");
+		    modal.style.display = "none";
+		    modal.style.position = "fixed";
+		    modal.style.zIndex = 1000;
+		    modal.style.top = 0;
+		    modal.style.left = 0;
+		    modal.style.width = "100vw";
+		    modal.style.height = "100vh";
+		    modal.style.background = "rgba(0,0,0,0.6)";
+		    modal.style.backdropFilter = "blur(4px)";
+		    modal.innerHTML = `
+		        <div id="modal-content" style="background:white;max-width:800px;margin:5% auto;padding:2rem;border-radius:10px;position:relative">
+		            <span id="closeModal" style="position:absolute;top:10px;right:20px;font-size:20px;cursor:pointer;">&times;</span>
+		            <div id="modal-body" style="max-height:70vh;overflow-y:auto;"></div>
+		        </div>
+		    `;
+		    document.body.appendChild(modal);
+		    document.getElementById("closeModal").onclick = () => modal.style.display = "none";
+
+			//Show Details
+			
+			function showDetails(item) {
+			    const body = document.getElementById("modal-body");
+
+			    let originalCode = "No code provided";
+			    let finalOutput = "Not generated";
+
+			    try {
+			        const parsedInput = JSON.parse(item.codeInput);
+			        originalCode = parsedInput.codeInput || originalCode;
+			    } catch {
+			        originalCode = item.codeInput || originalCode;
+			    }
+
+			    try {
+			        const parsedOutput = JSON.parse(item.fixedCode);
+			        finalOutput = parsedOutput.codeInput || finalOutput;
+			    } catch {
+			        finalOutput = item.fixedCode || finalOutput;
+			    }
+
+			    // 🔥 Fix fallback title logic
+			    let fallbackTitle = "Debug Session";
+			    try {
+			        const parsed = JSON.parse(item.codeInput);
+			        const firstLine = parsed.codeInput?.split('\n')[0]?.substring(0, 50).trim();
+			        fallbackTitle = firstLine || fallbackTitle;
+			    } catch {
+			        fallbackTitle = (item.codeInput || fallbackTitle).split('\n')[0]?.substring(0, 50).trim();
+			    }
+
+			    body.innerHTML = `
+					<h2>${(item.errorContext && item.errorContext.trim().toLowerCase() !== "none" ? item.errorContext.trim() : fallbackTitle)}</h2>
+			        <p><strong>Language:</strong> ${item.language}</p>
+			        <p><strong>Status:</strong> ${item.status}</p>
+			        <p><strong>Tool Used:</strong> ${item.toolUsed || "FixGenie AI"}</p>
+			        <p><strong>Timestamp:</strong> ${new Date(item.timestamp).toLocaleString()}</p>
+			        <h4>Original Code</h4><pre>${originalCode}</pre>
+			       	<h4>AI Suggestions</h4><pre>${item.aiSuggestions || "None"}</pre>
+			        <h4>Final Output</h4><pre>${finalOutput}</pre>
+			    `;
+
+			    modal.style.display = "block";
+			}
+
+
+
+			
+			//Code details
+
+			function renderHistory(data) {
+			    const container = document.querySelector(".history-container");
+			    container.innerHTML = "";
+
+			    let fixed = 0, failed = 0, progress = 0;
+
+				data.forEach(item => {
+				    const status = item.status?.toLowerCase();
+				    let statusClass = "progress", statusText = "In Progress", tooltip = "Debug session saved";
+
+				    if (["fixed", "solved", "success"].includes(status)) {
+				        statusClass = "fixed"; statusText = "Fixed"; tooltip = "Bug resolved"; fixed++;
+				    } else if (["failed", "error"].includes(status)) {
+				        statusClass = "failed"; statusText = "Failed"; tooltip = "Unresolved"; failed++;
+				    } else {
+				        progress++;
+				    }
+
+				    // 🧠 Smart fallback title
+				    let fallbackTitle = "Debug Session";
+				    try {
+				        let parsedCode = item.codeInput;
+				        if (typeof parsedCode === "string") {
+				            const jsonParsed = JSON.parse(item.codeInput);
+				            parsedCode = jsonParsed.codeInput || parsedCode;
+				        }
+				        fallbackTitle = parsedCode?.split('\n')[0]?.substring(0, 50).trim() || fallbackTitle;
+				    } catch (e) {
+				        fallbackTitle = (item.codeInput || fallbackTitle).split('\n')[0]?.substring(0, 50).trim();
+				    }
+
+				    // 📦 Extract raw code to display in preview
+				    let rawCode = "";
+				    try {
+				        let parsed = JSON.parse(item.codeInput);
+				        rawCode = parsed.codeInput || "";
+				    } catch {
+				        rawCode = item.codeInput || "";
+				    }
+
+				    const card = document.createElement("div");
+				    card.className = "card";
+				    card.onclick = () => showDetails(item);
+				    card.innerHTML = `
+						<h3>${(item.errorContext && item.errorContext.trim().toLowerCase() !== "none" ? item.errorContext.trim() : fallbackTitle)}</h3>
+				        <p class="meta">${new Date(item.timestamp).toLocaleString()} • ${item.language}</p>
+				        <pre>${rawCode.substring(0, 400)}...</pre>
+				        <div class="status ${statusClass}" data-tooltip="${tooltip}">${statusText}</div>
+				    `;
+				    container.appendChild(card);
+				});
+
+
+			    document.getElementById("total").innerText = data.length;
+			    document.getElementById("fixed").innerText = fixed;
+			    document.getElementById("failed").innerText = failed;
+			    document.getElementById("progress").innerText = progress;
+			}
+
+
+
+		    // Export to CSV
+		    function exportToCSV(historyData) {
+		        const headers = ["Context", "Language", "Status", "Tool", "Timestamp", "Code", "AI Suggestions", "Output"];
+		        const rows = historyData.map(h => [
+		            `"${h.errorContext || ''}"`,
+		            `"${h.language || ''}"`,
+		            `"${h.status || ''}"`,
+		            `"${h.toolUsed || ''}"`,
+		            `"${new Date(h.timestamp).toLocaleString()}"`,
+		            `"${(h.code || '').replace(/"/g, '""')}"`,
+		            `"${(h.aiSuggestions || '').replace(/"/g, '""')}"`,
+		            `"${(h.output || '').replace(/"/g, '""')}"`
+		        ].join(","));
+
+		        const csvContent = [headers.join(","), ...rows].join("\n");
+		        const blob = new Blob([csvContent], { type: 'text/csv' });
+		        const link = document.createElement("a");
+		        link.href = URL.createObjectURL(blob);
+		        link.download = "fixgenie_debug_history.csv";
+		        link.click();
+		    }
+
+		    // Attach to export button
+		    document.querySelector("button:nth-child(3)").onclick = () => exportToCSV(originalHistory);
+		
+        const searchInput = document.getElementById("searchBox");
+        let originalHistory = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const username = localStorage.getItem("username");
+            document.getElementById("display-username").textContent = username || "Guest";
+        });
+
+        window.onload = function () {
+            const token = localStorage.getItem("token");
+            const loader = document.getElementById("history-loader");
+            loader.style.display = "block";
+
+            fetch("/api/debug/my-history", {
+                headers: { "Authorization": "Bearer " + token }
+            })
+            .then(res => res.json())
+            .then(data => {
+				console.log("Fetched Debug History:", data);
+                originalHistory = data;
+                renderHistory(data);
+                loader.style.display = "none";
+            })
+            .catch(err => {
+                console.error(err);
+                document.querySelector(".history-container").innerHTML = "<p>Error loading history.</p>";
+            });
+        };
+
+
+        searchInput.addEventListener("input", e => {
+            const term = e.target.value.toLowerCase();
+            const filtered = originalHistory.filter(item =>
+                item.errorContext?.toLowerCase().includes(term) ||
+                item.language?.toLowerCase().includes(term) ||
+                item.status?.toLowerCase().includes(term)
+            );
+            renderHistory(filtered);
+        });
+		
+		
+    </script>
+	
+
+
+</body>
+</html>
