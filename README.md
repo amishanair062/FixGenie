@@ -38,3 +38,8 @@
    ```bash
    git clone https://github.com/your-username/fixgenie.git
    cd fixgenie
+
+🙋‍♀️ Author
+👩‍💻 Amisha Nair
+📧 amishanair0611@gmail.com
+🔗 www.linkedin.com/in/amisha-nair06
