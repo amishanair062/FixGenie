@@ -3,69 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FixGenie - Debugger</title>
+    <title>FixGenie</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <link rel="stylesheet" href="style.css">
 	<link rel="icon" type="image/x-icon" href="image/FG.ico">
+	
+	<style>
+		section{
+			margin-top: 5rem;
+		}
+	</style>
 </head>
 <body>
     <header class="navbar">
 		<a href="index.html">
         <img src="image/FIxGenieLogo.svg"></a>
         <nav>
-           <!-- <ul class="nav-links">
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="debugger.html">Debugger</a></li>
-                <li><a href="history.html">History</a></li>
-                <li><a href="setting.html">Settings</a></li>
-            </ul>-->
-        </nav>
+           
 		<div class="auth-buttons">
 			<button onclick="location.href='signin.html'">Sign Up</button>
 			<button onclick="location.href='login.html'">Login</button>
-		</div>
-		    </header>
+		</div>        
+		</nav>
+	</header>
 
-	<section>	
-	<div class="container">
-	        <div class="welcome-box">
-	            <h1>Welcome to FixGenie</h1>
-	            <p style="color: #dfefff; font-size: 1.5rem;">Powering developers with AI precision and coding magic. Dive in and debug smarter.</p>
-	        </div>
-	</div>
-	</section>
+			<section class="hero-section">
+			    <div class="container">
+			      <div class="welcome-box">
+			        <h1 style="font-size: 50px;">Welcome to FixGenie</h1>
+			        <p style="color: #dfefff; font-size: 1.5rem;">Powering developers with AI precision and coding magic. Dive in and debug smarter.</p>
+			        <button class="get-started-btn" onclick="location.href='signin.html'" style="margin-top: 3rem; font-size: 17px;">Get Started 🚀</button>
+			      </div>
+			    </div>
+			  </section>
+
+			  
+			  <section class="why-fg">
+			    <h2>Why Choose FixGenie?</h2>
+			    <div class="features">
+			      <div class="feature-card" >
+			        <span><i class="fas fa-robot fa-2x"></i></span>
+			        <h3>AI-Powered Debugging</h3>
+			        <p>Fix bugs instantly with cutting-edge AI trained to understand and solve complex code issues.</p>
+			      </div>
+			      <div class="feature-card">
+					<span><i class="fas fa-history fa-2x"></i></span>
+			        <h3>Debug History</h3>
+			        <p>Track every fix, view past issues, and export your debugging logs with one click.</p>
+			      </div>
+			      <div class="feature-card">
+			        <span><i class="fas fa-lightbulb fa-2x"></i></span> 
+			        <h3>Smart Suggestions</h3>
+			        <p>Get personalized tips, fixes, and optimizations tailored to your coding style.</p>
+			      </div>
+			    </div>
+			  </section>
+
 	
-	<section> 
-	<div class="tip-container">
-		<div class="tip-box">
-		<h1>Today's Dubugging Tip of the day</h1> <br>
-		<p>Always check for off-by-one errors in loops and boundary conditions. They’re a sneaky source of bugs!</p>
-	</div>
-</div>
-	</section>
-	
-	
-	<div class="section-container">
-		<div class="section-box">
-		            <div class="section-title">Recent Activities</div>
-		            <ul>
-		                <li>Debugged null pointer exception at 11:45 AM</li>
-		                <li>Fixed memory leak in Module X at 10:22 AM</li>
-		                <li>User JohnDoe signed in</li>
-		            </ul>
-		        </div>
-				</div>
-				
-	<div class="score-box">
-	<div class="fix-score">
-				        <div class="score-title"><h1>🏆 Your Debugging Streak</h1> </div>
-				       	 	<p class="streak-number">5 Days 🔧</p>
-				        	<p>Keep the momentum going! You're crushing bugs like a pro.</p>
-				    	</div>
-	</div>
-	
-		 <footer>
-		        &copy; 2025 FixGenie. All rights reserved. | Powered by AI & Code Wizards
-		 </footer>
+	<footer class="footer">
+	  <div class="footer-container">
+	    <div class="footer-brand">
+	      <h2>FixGenie<span>⚡</span></h2>
+	      <p>Your AI debugging companion.</p>
+	    </div>
+
+	    <div class="footer-links">
+	      <a href="index.html">Home</a>
+	      <a href="about.html">About</a>
+	      <a href="contact.html">Contact</a>
+	      <a href="https://github.com/amishanair062/FixGenie" target="_blank">GitHub</a>
+	    </div>
+
+	    <div class="footer-bottom">
+	      <p>&copy; 2025 FixGenie | Built with 💻 by Mastermind</p>
+	    </div>
+	  </div>
+	</footer>
+
 		 
 		 
 </body>

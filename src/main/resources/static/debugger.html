@@ -8,12 +8,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 		<link rel="icon" type="image/x-icon" href="image/FG.ico">
 	<style>
-	      <!--  body {
-	            display: flex;
-	            flex-direction: column;
-	            height: 100vh;
-	            color: #333;
-	        }-->
+	      
 	        .container {
 	            display: flex;
 	            flex-direction: column;
@@ -67,25 +62,17 @@
 	        .btn:hover {
 	            background: #2980b9;
 	        }
-			select{
-				background-color: #3498db;
-				padding: 4px;
-				border: none;
-				border-radius: 5px;
-				color: white;
-				margin: 0 10px;
-			}
-			select:hover{
-				background-color: #2980b9;
-			}
-			#file-upload{
-				background-color: #3498db;
-				    padding: 4px;
-				    border: none;
-				    border-radius: 5px;
-				    color: white;
-				    margin: 0 10px;
-			}
+			select, #file-upload {
+			    background-color: #3498db;
+			    padding: 4px;
+			    border: none;
+			    border-radius: 5px;
+			    color: white;
+			    margin: 0 10px;
+			 }
+			 select:hover, #file-upload:hover {
+			    background-color: #2980b9;
+			 }
 			
 			pre {
 			    background-color: #e8eaf6;
@@ -117,184 +104,167 @@
 			    background-color: #2980b9;
 			}
 
-			
-			input{
-				
-			}
+			#loader {
+			            display: none;
+			            margin-top: 10px;
+			            color: #555;
+			            font-style: italic;
+			        }
 	    </style>
 	</head>
 	<body>
-	    <header class="navbar">
-			<a href="dashboard.html">
-			        <img src="image/FIxGenieLogo.svg"></a>
-			       
-	        <nav>
-	            <ul class="nav-links">
-	                <li><a href="dashboard.html">Dashboard</a></li>
-	                <li><a href="debugger.html">Debugger</a></li>
-	                <li><a href="history.html">History</a></li>
-	                <li><a href="setting.html">Settings</a></li>
-	            </ul>
-	        </nav>
-<a href="profile.html" class="username">👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i></a>			
+		<header class="navbar">
+		    <a href="dashboard.html" class="logo">
+		        <img src="image/FIxGenieLogo.svg" alt="FixGenie Logo">
+		    </a>
+
+		    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+		    <label for="nav-toggle" class="hamburger">&#9776;</label>
+
+		    <nav class="nav">
+		        <ul class="nav-links">
+		            <li><a href="dashboard.html" >Dashboard</a></li>
+		            <li><a href="debugger.html" >Debugger</a></li>
+		            <li><a href="history.html" >History</a></li>
+		            <li><a href="setting.html" >Settings</a></li>
+		        </ul>
+		    </nav>
 			
+		    <a href="profile.html" class="username">
+		        👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i>
+		    </a>
+		</header>
+
+	<div class="container">
+	    <header class="top-bar">
+	        <select id="language-select">
+	            <option value="java">Java</option>
+	            <option value="python">Python</option>
+	            <option value="javascript">JavaScript</option>
+	        </select>
+	        <button class="btn" onclick="runDebugger()">Run</button>
+	        <button class="btn" onclick="clearEditor()">Clear</button>
+	        <label for="file-upload" class="fileUpload">
+	            <i class="fa-solid fa-file"></i>  Choose File
+	        </label>
+	        <input type="file" id="file-upload" accept=".txt, .java, .py, .js" style="display:none;">
+	        <span id="file-name" style="margin-left: 10px; font-style: italic;"></span>
 	    </header>
-	    <div class="container">
-	        <header class="top-bar">
-	            <select id="language-select">
-	                <option value="java">Java</option>
-	                <option value="python">Python</option>
-	                <option value="javascript">JavaScript</option>
-	            </select>
-	            <button class="btn" onclick="runDebugger()">Run</button>
-	            <button class="btn" onclick="clearEditor()">Clear</button>
-				<label for="file-upload" class="fileUpload">
-					<i class="fa-solid fa-file"></i>  Choose File
-				</label>
-				
-	            <input type="file" id="file-upload" accept=".txt, .java, .py, .js" style="display:none;">
-				<span id="file-name" style="margin-left: 10px; font-style: italic;"></span>
+	    <section class="editor">
+	        <textarea id="code-editor" placeholder="Write or paste your code here..."></textarea>
+	    </section>
+	    <section class="output">
+	        <h3 id="Ot">Output:</h3>
+	        <div id="loader">🔍 Analyzing code with FixGenie...</div>
+	        <div class="output-box" id="output-box">Your debug results will appear here.</div>
+	    </section>
+	</div>
+	<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const username = localStorage.getItem("username");
+	        if (username) {
+	            document.getElementById("display-username").textContent = username;
+	        } else {
+	            document.getElementById("display-username").textContent = "Guest";
+	        }
+	    });
 
-	        </header>
-	        <section class="editor">
-	            <textarea id="code-editor" placeholder="Write or paste your code here..."></textarea>
-	        </section>
-	        <section class="output">
-	            <h3  id="Ot">Output:</h3>
-	            <div class="output-box" id="output-box">Your debug results will appear here.</div>
-	        </section>
-	    </div>
+	    function runDebugger() {
+	        const code = document.getElementById("code-editor").value;
+	        const language = document.getElementById("language-select").value;
+	        const token = localStorage.getItem("token");
+
+	        document.getElementById("loader").style.display = "block";
+	        document.getElementById("output-box").innerText = "";
+
+	        fetch("/api/debug/ai-solve", {
+	            method: "POST",
+	            headers: { "Content-Type": "application/json" },
+	            body: JSON.stringify({ errorText: code, language: language })
+	        })
+	        .then(res => { if (!res.ok) throw new Error("AI Debugging failed"); return res.json(); })
+	        .then(aiData => {
+	            let explanation = aiData.explanation.replace(/(error|exception|null|undefined|fail)/gi, 
+	                match => `<span style="color: red; font-weight: bold;">${match}</span>`);
+
+	            let fixedCode = "";
+	            const match = aiData.solution.match(/```(?:\w+)?\n([\s\S]*?)\n```/);
+	            if (match) fixedCode = match[1].trim();
+
+	            let aiOutput = `<strong>🧠 AI Debugging Result---></strong><br><br>`;
+	            aiOutput += `<strong>Solution:</strong><br><pre>${aiData.solution}</pre><br>`;
+	            aiOutput += `<strong>Explanation:</strong><br><pre>${aiData.explanation}</pre><br>`;
+	            aiOutput += `<strong>Confidence:</strong> ${(aiData.confidence * 100).toFixed(2)}%<br><hr>`;
+
+	            fetch("/api/debug/save", {
+	                method: "POST",
+	                headers: {
+	                    "Content-Type": "application/json",
+	                    "Authorization": "Bearer " + token
+	                },
+	                body: JSON.stringify({ codeInput: code, language: language, fixedCode: fixedCode })
+	            })
+	            .then(res => { if (!res.ok) throw new Error("Saving debug history failed"); return res.json(); })
+	            .then(saveData => {
+	                document.getElementById("loader").style.display = "none";
+	                document.getElementById("output-box").innerHTML = aiOutput + `<strong>📄 Debug Save Status:</strong> ${saveData.status}<br><br>`;
+	            })
+	            .catch(error => {
+	                document.getElementById("loader").style.display = "none";
+	                document.getElementById("output-box").innerText = "Save Error: " + error.message;
+	            });
+
+	        })
+	        .catch(error => {
+	            document.getElementById("loader").style.display = "none";
+	            document.getElementById("output-box").innerText = "AI Error: " + error.message;
+	        });
+	    }
+
+	    function clearEditor() {
+	        document.getElementById("code-editor").value = "";
+	        document.getElementById("output-box").innerText = "Your debug results will appear here.";
+	    }
+
+	    document.getElementById("file-upload").addEventListener("change", function () {
+	        const file = this.files[0];
+	        if (file) {
+	            const reader = new FileReader();
+	            reader.onload = function (e) {
+	                document.getElementById("code-editor").value = e.target.result;
+	            };
+	            reader.readAsText(file);
+	            document.getElementById("file-name").textContent = file.name;
+	        } else {
+	            document.getElementById("code-editor").value = "";
+	            document.getElementById("file-name").textContent = "";
+	        }
+	    });
 		
-		
-		<!--//javascript------>
-		
-		<script>
-		document.addEventListener("DOMContentLoaded", function () {
-		    const username = localStorage.getItem("username");
-		    console.log("Username from localStorage: ", username);
-		    if (username) {
-		        document.getElementById("display-username").textContent = username;
-		    } else {
-		        document.getElementById("display-username").textContent = "Guest";
-		    }
-		});
+		let lastScroll = 0;
+		    const navbar = document.querySelector(".navbar");
 
-		function runDebugger() {
-		    const code = document.getElementById("code-editor").value;
-		    const language = document.getElementById("language-select").value;
-		    const token = localStorage.getItem("token");
+		    window.addEventListener("scroll", () => {
+		        const currentScroll = window.pageYOffset;
 
-		    fetch("/api/debug/ai-solve", {
-		        method: "POST",
-		        headers: {
-		            "Content-Type": "application/json"
-		        },
-		        body: JSON.stringify({
-		            errorText: code,
-		            language: language
-		        })
-		    })
-		    .then(res => {
-		        if (!res.ok) throw new Error("AI Debugging failed");
-		        return res.json();
-		    })
-		    .then(aiData => {
-				
-				let explanation = aiData.explanation.replace(/(error|exception|null|undefined|fail)/gi, 
-				    match => `<span style="color: red; font-weight: bold;">${match}</span>`);
-
-		        // Extract fixed code from solution using regex
-		        let fixedCode = "";
-		        const match = aiData.solution.match(/```(?:\w+)?\n([\s\S]*?)\n```/);
-		        if (match) {
-		            fixedCode = match[1].trim();
+		        if (currentScroll <= 0) {
+		            navbar.style.top = "0";
+		            return;
 		        }
 
-		        let aiOutput = `<strong>🧠 AI Debugging Result---></strong><br><br>`;
-		        aiOutput += `<strong>Solution:</strong><br><pre>${aiData.solution}</pre><br>`;
-		        aiOutput += `<strong>Explanation:</strong><br><pre>${aiData.explanation}</pre><br>`;
-		        aiOutput += `<strong>Confidence:</strong> ${(aiData.confidence * 100).toFixed(2)}%<br><hr>`;
+		        if (currentScroll > lastScroll) {
+		            // Scrolling down
+		            navbar.style.top = "-100px";
+		        } else {
+		            // Scrolling up
+		            navbar.style.top = "0";
+		        }
 
-		        // ✅ Now pass the fixed code to the save API
-		        fetch("/api/debug/save", {
-		            method: "POST",
-		            headers: {
-		                "Content-Type": "application/json",
-		                "Authorization": "Bearer " + token
-		            },
-		            body: JSON.stringify({
-		                codeInput: code,
-		                language: language,
-		                fixedCode: fixedCode 
-		            })
-		        })
-		        .then(res => {
-		            if (!res.ok) throw new Error("Saving debug history failed");
-		            return res.json();
-		        })
-		        .then(saveData => {
-		            let fullOutput = aiOutput;
-		            fullOutput += `<strong>📄 Debug Save Status:</strong> ${saveData.status}<br><br>`;
-		            
-		            document.getElementById("output-box").innerHTML = fullOutput;
-		        })
-		        .catch(error => {
-		            document.getElementById("output-box").innerText = "Save Error: " + error.message;
-		        });
-
-		    })
-		    .catch(error => {
-		        document.getElementById("output-box").innerText = "AI Error: " + error.message;
+		        lastScroll = currentScroll;
 		    });
-		}
-
-		
-		/*function runDebugger() {
-		    const runBtn = document.getElementById("run-button");
-		    runBtn.disabled = true;
-		    runBtn.innerText = "Debugging...";
-
-		    // your fetch logic here...
-
-		    // inside the final `.then()` or `.catch()`, re-enable:
-		    runBtn.disabled = false;
-		    runBtn.innerText = "Run Debugger";
-		}*/
-
-
-		function clearEditor() {
-		    document.getElementById("code-editor").value = "";
-		    document.getElementById("output-box").innerText = "Your debug results will appear here.";
-		}
-		
-		/*File-uplaod function*/
-		
-		document.getElementById("file-upload").addEventListener("change", function () {
-		    const file = this.files[0];
-		    if (file) {
-		        const reader = new FileReader();
-		        reader.onload = function (e) {
-		            document.getElementById("code-editor").value = e.target.result;
-		        };
-		        reader.readAsText(file);
-
-		        document.getElementById("file-name").textContent = file.name;
-		    } else {
-		        document.getElementById("code-editor").value = "";
-		        document.getElementById("file-name").textContent = "";
-		    }
-		});
-
-		
-		document.getElementById("file-upload").addEventListener("change", function () {
-		    const file = this.files[0];
-		    document.getElementById("file-name").textContent = file ? file.name : "";
-		});
-
-		</script>
-		<script src="/settings.js"></script>
-
-
-
+			
+			
+	</script>
+	<script src="/settings.js"></script>
 	</body>
 	</html>

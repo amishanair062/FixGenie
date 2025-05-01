@@ -36,7 +36,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers( "/api/auth/**" ,"/api/auth/signup", "/login", "/api/debug/ai-solve" ).permitAll()
-                .requestMatchers("/", "/index.html","/debugger.html", "/style.css", "/dashboard.html", "/history.html", "/setting.html", "/signin.html", "/login.html", "/forget-password.html", "/resetpage.html","/image/**", "/static/**", "/css/**", "/script.js", "/settings.js", "/profile.html" ).permitAll()
+                .requestMatchers("/", "/index.html","/debugger.html", "/style.css", "/dashboard.html", "/history.html", "/setting.html", "/signin.html", "/login.html", "/forget-password.html", "/resetpage.html","/image/**", "/static/**", "/css/**", "/script.js", "/settings.js", "/profile.html", "/about.html", "/contact.html" ).permitAll()
                 .requestMatchers("/api/debug/save", "/api/debug/my-history").hasAnyRole("USER", "ADMIN")  // if only users should access
                 .requestMatchers("/api/users").hasRole("USER")
                 .anyRequest().authenticated()

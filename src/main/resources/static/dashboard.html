@@ -9,20 +9,28 @@
   <link rel="icon" type="image/x-icon" href="image/FG.ico"/>
 </head>
 <body>
-  <header class="navbar">
-    <a href="dashboard.html">
-      <img src="image/FIxGenieLogo.svg" />
-    </a>
-    <nav>
-      <ul class="nav-links">
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="debugger.html">Debugger</a></li>
-        <li><a href="history.html">History</a></li>
-        <li><a href="setting.html">Settings</a></li>
-      </ul>
-    </nav>
-    <a href="profile.html" class="username">👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i></a>
-  </header>
+	<header class="navbar">
+	    <a href="dashboard.html" class="logo">
+	        <img src="image/FIxGenieLogo.svg" alt="FixGenie Logo">
+	    </a>
+
+	    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+	    <label for="nav-toggle" class="hamburger">&#9776;</label>
+
+	    <nav class="nav">
+	        <ul class="nav-links">
+	            <li><a href="dashboard.html">Dashboard</a></li>
+	            <li><a href="debugger.html">Debugger</a></li>
+	            <li><a href="history.html">History</a></li>
+	            <li><a href="setting.html">Settings</a></li>
+	        </ul>
+	    </nav>
+
+	    <a href="profile.html" class="username">
+	        👋 Hello!! <span id="display-username">Hello</span> <i class="fa-solid fa-circle-user"></i>
+	    </a>
+	</header>
+
 
   <main class="debugger-main">
 	<div class = "container">
@@ -64,9 +72,26 @@
 	</div>
   </main>
 
-  <footer>
-    &copy; 2025 FixGenie. All rights reserved. | Powered by AI & Code Wizards
-  </footer>
+  <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <h2>FixGenie<span>⚡</span></h2>
+          <p>Your AI debugging companion.</p>
+        </div>
+
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="https://github.com/amishanair062/FixGenie" target="_blank">GitHub</a>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 FixGenie | Built with 💻 by Mastermind</p>
+        </div>
+      </div>
+    </footer>
+	
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
