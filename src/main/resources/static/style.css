@@ -4,6 +4,10 @@
             box-sizing: border-box;
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+		
+		html{
+			scroll-behavior: smooth;
+		}
 		img{
 			width: 205px;
 			height: 98px;
