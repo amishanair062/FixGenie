@@ -1,14 +1,13 @@
-# Use an official JDK base image
-FROM openjdk:17-jdk-slim
-
-# Set working directory
+# -------- Build Stage --------
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean install -DskipTests
 
-# Copy the JAR file
-COPY target/FixGenie-ai-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose port (must match what your Spring Boot runs on)
+# -------- Runtime Stage --------
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/FixGenie-ai-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-# Run the JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
